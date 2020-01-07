@@ -7,7 +7,8 @@
     "serve": "nodemon server/index.js",
     "deploy": "scripts/deploy",
     "build-watch": "webpack -w",
-    "start": "npm run build-watch & npm run serve"
+    "start": "npm run build-watch & npm run serve",
+    "heroku-prebuild": "npm install --dev"
   },
   "author": "",
   "license": "ISC",
