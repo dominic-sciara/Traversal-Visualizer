@@ -1,0 +1,162 @@
+  
+.outer {
+  position: relative;
+  margin: 0px;
+  width: 12px;
+  cursor: pointer;
+}
+.outer:hover label {
+  opacity: 1;
+}
+
+.outer:hover .inner:before,
+.outer:hover .inner:after {
+  transform: rotate(0);
+}
+
+.outer:hover .inner:before {
+  top: 0;
+}
+
+.outer:hover .inner:after {
+  bottom: 0;
+}
+
+.inner {
+  width: inherit;
+  text-align: start;
+  display: flex;
+}
+.inner:before, .inner:after {
+  position: absolute;
+  content: '';
+  height: 1px;
+  width: inherit;
+  background: rgb(112, 66, 24);
+  left: 0;
+  transition: all .3s ease-in;
+}
+
+.inner:before {
+  top: 45%; 
+  transform: rotate(45deg);  
+}
+
+.inner:after {  
+  bottom: 50%;
+  transform: rotate(-45deg);  
+}
+
+label { 
+  font-size: .1em; 
+  line-height: 8em;
+  text-transform: uppercase;
+  color: white;
+  transition: all .3s ease-in;
+  opacity: 0;
+  cursor: pointer;
+  position: relative;
+  left: -100%
+}
+
+label:active {
+  color: red;
+  transition: all 0s;
+
+}
+
+
+
+.node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  padding: 0px;
+  animation: bounce 0.5s;
+  animation-direction: alternate;
+  animation-timing-function: cubic-bezier(.5,0.05,1,.5);
+  animation-iteration-count: 2;
+  align-self: center;
+}
+.node p {
+  color: white;
+  margin: 5px;
+}
+.blank {
+  background: white;
+}
+.normal {
+  background: radial-gradient(circle at 65% 15%, white 1px, gold 3%, #b38600 60%, white 100%); 
+}
+.selected {
+animation: bubble-anim 1s;
+animation-timing-function: cubic-bezier(.5,0.05,1,.5);
+animation-iteration-count: 1;
+background: radial-gradient(circle at 65% 15%, white  1px, #ff3300 3%, #800000 60%, #d9d9d9 100%);
+}
+.found {
+animation: spin 1s;
+background: radial-gradient(circle at 65% 15%, white 1px,  rgb(106, 133, 59) 3%,  #3b723b 60%,#d9d9d9 100%);
+}
+.remove {
+  animation: zoomMe 1s ease-out;
+  background: radial-gradient(circle at 65% 15%, white 1px,  rgb(55, 128, 150) 3%,  blue 60%,#d9d9d9 100%);
+}
+
+line {
+  stroke:rgb(255,0,0);
+  stroke-width: 2;
+}
+svg {
+  height: 100px;
+}
+#container {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+@keyframes bubble-anim {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scaleY(0.95) scaleX(1.05);
+  }
+  48% {
+    transform: scaleY(1.1) scaleX(0.9);
+  }
+  68% {
+    transform: scaleY(0.98) scaleX(1.02);
+  }
+  80% {
+    transform: scaleY(1.02) scaleX(0.98);
+  }
+  97%, 100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  from { transform: translate3d(0, 0, 0);     }
+  to   { transform: translate3d(0, 25px, 0); }
+}
+
+@keyframes zoomMe {
+  25%{
+    transform: scale(1.5);
+  }
+  75%{
+    transform: scale(1);
+  }
+}
