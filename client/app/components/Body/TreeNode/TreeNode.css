@@ -1,4 +1,15 @@
-  
+#default {
+  cursor: pointer;
+  font-size: 12px;
+}  
+#default:hover {
+  opacity: 0.4;
+}
+#default:active {
+  color: red;
+  transition: all 0s;
+
+}
 .outer {
   position: relative;
   margin: 0px;

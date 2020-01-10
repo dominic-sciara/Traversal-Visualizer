@@ -49,7 +49,7 @@ const TreeNode = (props) => {
             return (
                 <div  className="node normal" level={depth} index={index} style={{marginTop: '30px'}} >
                     <p id='value'>{value}</p>
-                    <p onClick={removeHandler}>Remove</p>
+                    <p id='default' onClick={removeHandler}>Remove</p>
                     
                 </div>
             )
