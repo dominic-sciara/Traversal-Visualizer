@@ -751,10 +751,15 @@ __webpack_require__(/*! ./TreeContainer.css */ "./client/app/components/Body/Tre
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function checkChrome() {
+  return navigator.userAgent.includes('Chrome');
+}
+
 var TreeContainer = function TreeContainer() {
   var depth = (0, _reactRedux.useSelector)(function (state) {
     return state.tree.length;
   });
+  var chrome = checkChrome();
   return _react2.default.createElement(
     'div',
     null,
@@ -762,7 +767,7 @@ var TreeContainer = function TreeContainer() {
       'div',
       { className: 'tree-container' },
       new Array(depth).fill(null).map(function (blank, level) {
-        return _react2.default.createElement(_TreeLevel2.default, { key: level, level: level });
+        return _react2.default.createElement(_TreeLevel2.default, { chrome: chrome, key: level, level: level });
       })
     )
   );
@@ -830,7 +835,7 @@ var TreeLevel = function TreeLevel(props) {
         'div',
         { className: 'level', key: level },
         level.map(function (node, index) {
-            return _react2.default.createElement(_TreeNode2.default, { key: '' + index + level, depth: props.level, index: index });
+            return _react2.default.createElement(_TreeNode2.default, { key: '' + index + level, chrome: props.chrome, depth: props.level, index: index });
         })
     );
 };
@@ -905,7 +910,7 @@ var TreeNode = function TreeNode(props) {
     var value = (0, _reactRedux.useSelector)(function (state) {
         return state.tree[depth][index];
     });
-
+    var chrome = props.chrome;
     function removeHandler() {
         // used the store.getState() method here instead of using a useSelector 
         // for root and speed to avoid unnecessary re-renders
@@ -926,32 +931,47 @@ var TreeNode = function TreeNode(props) {
         // blank node
         return _react2.default.createElement('div', { className: 'node', key: '' + depth + index, style: { backgroundColor: 'white' } });
     } else {
-        // node with value
-        return _react2.default.createElement(
-            'div',
-            { className: 'node normal', level: depth, index: index, style: { marginTop: '30px' } },
-            _react2.default.createElement(
-                'p',
-                { id: 'value' },
-                value
-            ),
-            _react2.default.createElement(
+        if (chrome) {
+            return _react2.default.createElement(
                 'div',
-                { className: 'outer' },
+                { className: 'node normal', level: depth, index: index, style: { marginTop: '30px' } },
+                _react2.default.createElement(
+                    'p',
+                    { id: 'value' },
+                    value
+                ),
                 _react2.default.createElement(
                     'div',
-                    { className: 'inner' },
+                    { className: 'outer' },
                     _react2.default.createElement(
-                        'label',
-                        { onClick: removeHandler },
-                        'Remove'
+                        'div',
+                        { className: 'inner' },
+                        _react2.default.createElement(
+                            'label',
+                            { onClick: removeHandler },
+                            'Remove'
+                        )
                     )
                 )
-            )
-        );
+            );
+        } else {
+            return _react2.default.createElement(
+                'div',
+                { className: 'node normal', level: depth, index: index, style: { marginTop: '30px' } },
+                _react2.default.createElement(
+                    'p',
+                    { id: 'value' },
+                    value
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { onClick: removeHandler },
+                    'Remove'
+                )
+            );
+        }
     }
 };
-
 exports.default = TreeNode;
 
 /***/ }),

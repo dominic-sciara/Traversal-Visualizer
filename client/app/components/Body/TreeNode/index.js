@@ -10,7 +10,7 @@ const TreeNode = (props) => {
     const depth = props.depth
     const index = props.index
     const value = useSelector(state => state.tree[depth][index])
-    
+    const chrome = props.chrome
     function removeHandler() {
         // used the store.getState() method here instead of using a useSelector 
         // for root and speed to avoid unnecessary re-renders
@@ -34,19 +34,27 @@ const TreeNode = (props) => {
             <div className="node" key={`${depth}${index}`} style={{backgroundColor: 'white'}} />
         )
     } else {
-        // node with value
-        return (
-            <div  className="node normal" level={depth} index={index} style={{marginTop: '30px'}} >
-                <p id='value'>{value}</p>
-                <div className="outer">
-                    <div className="inner">
-                        <label onClick={removeHandler}>Remove</label>
-                    </div>
+        if (chrome) {
+            return (
+                <div  className="node normal" level={depth} index={index} style={{marginTop: '30px'}} >
+                    <p id='value'>{value}</p>
+                    <div className="outer">
+                        <div className="inner">
+                            <label onClick={removeHandler}>Remove</label>
+                        </div>
+                    </div> 
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div  className="node normal" level={depth} index={index} style={{marginTop: '30px'}} >
+                    <p id='value'>{value}</p>
+                    <p onClick={removeHandler}>Remove</p>
+                    
+                </div>
+            )
+        }
     }
 
 }
-
 export default TreeNode; 

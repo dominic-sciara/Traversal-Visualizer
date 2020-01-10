@@ -9,7 +9,7 @@ const TreeLevel = (props) => {
             {
                 level.map((node, index) => {
                 return (
-                    <TreeNode key={`${index}${level}`} depth={props.level} index={index} />
+                    <TreeNode key={`${index}${level}`} chrome ={props.chrome} depth={props.level} index={index} />
                 )
             })}
         </div>
