@@ -1,6 +1,7 @@
 #default {
   cursor: pointer;
   font-size: 12px;
+  color: whitesmoke;
 }  
 #default:hover {
   opacity: 0.4;

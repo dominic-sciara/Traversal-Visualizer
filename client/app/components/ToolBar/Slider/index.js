@@ -23,6 +23,7 @@ const Slider = () => {
             <p>Animation Speed</p>
             <span id="demo"></span>
             <input  
+                    onTouchEnd={mouseUpHandler}
                     onMouseUp={mouseUpHandler}
                     onChange={changeHandler} 
                     type="range" min="1" max="100" 
