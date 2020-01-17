@@ -86,4 +86,32 @@ export function animate(domNodes, listAnimations, index, className, speed) {
     }, speed);
 }
 
-
+// had to make a iterative insert for the random tree generator
+export function insert(root, value) {
+    let current = root
+    while (true) {
+        if (value >= current.value) {
+            if (current.right !== null) {
+                current = current.right
+            } else {
+                if (current.level >= MAX_TREE_LEVEL) {
+                    return root
+                } else {
+                    current.right = new BST(value, current.level + 1, (current.index * 2) + 1)
+                    return root
+                }
+            }
+        } else {
+            if (current.left !== null) {
+                current = current.left
+            } else {
+                if (current.level >= MAX_TREE_LEVEL) {
+                    return root
+                } else {
+                    current.left = new BST(value, current.level + 1, current.index * 2)
+                    return root
+                }
+            }
+        }
+    }
+}

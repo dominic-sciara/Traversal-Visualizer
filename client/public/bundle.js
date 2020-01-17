@@ -279,6 +279,7 @@ var traverse = exports.traverse = function () {
 exports.treeToArray = treeToArray;
 exports.emptyTree = emptyTree;
 exports.animate = animate;
+exports.insert = insert;
 
 var _constants = __webpack_require__(/*! ../constants */ "./client/app/constants/index.js");
 
@@ -369,6 +370,36 @@ function emptyTree() {
     }, speed);
 }
 
+// had to make a iterative insert for the random tree generator
+function insert(root, value) {
+    var current = root;
+    while (true) {
+        if (value >= current.value) {
+            if (current.right !== null) {
+                current = current.right;
+            } else {
+                if (current.level >= _constants.MAX_TREE_LEVEL) {
+                    return root;
+                } else {
+                    current.right = new BST(value, current.level + 1, current.index * 2 + 1);
+                    return root;
+                }
+            }
+        } else {
+            if (current.left !== null) {
+                current = current.left;
+            } else {
+                if (current.level >= _constants.MAX_TREE_LEVEL) {
+                    return root;
+                } else {
+                    current.left = new BST(value, current.level + 1, current.index * 2);
+                    return root;
+                }
+            }
+        }
+    }
+}
+
 /***/ }),
 
 /***/ "./client/app/algorithms/post-order.js":
@@ -436,6 +467,35 @@ function getPreOrderAnimations(head) {
         }
     }
     return animations;
+}
+
+/***/ }),
+
+/***/ "./client/app/algorithms/random_generator.js":
+/*!***************************************************!*\
+  !*** ./client/app/algorithms/random_generator.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = generate_random_tree;
+
+var _index = __webpack_require__(/*! ./index */ "./client/app/algorithms/index.js");
+
+function generate_random_tree() {
+    var node = Math.floor(Math.random() * 1000 + 1);
+    var root = new _index.BST(node);
+    for (var i = 1; i < 10; ++i) {
+        root = (0, _index.insert)(root, Math.floor(Math.random() * 1000 + 1));
+    }
+    var tree = (0, _index.treeToArray)(root);
+    return { random_tree: tree, random_root: root };
 }
 
 /***/ }),
@@ -1637,9 +1697,18 @@ var ToolBar = function (_Component) {
                                     null,
                                     _react2.default.createElement(_Slider2.default, null),
                                     _react2.default.createElement(
-                                        'button',
-                                        { onClick: this.props.reset, id: 'reset' },
-                                        ' Reset Tree '
+                                        'div',
+                                        null,
+                                        _react2.default.createElement(
+                                            'button',
+                                            { onClick: this.props.generate, id: 'gen' },
+                                            ' Generate Random Tree '
+                                        ),
+                                        _react2.default.createElement(
+                                            'button',
+                                            { onClick: this.props.reset, id: 'reset' },
+                                            ' Reset Tree '
+                                        )
                                     )
                                 )
                             )
@@ -1716,9 +1785,18 @@ var ToolBar = function (_Component) {
                                     null,
                                     _react2.default.createElement(_Slider2.default, null),
                                     _react2.default.createElement(
-                                        'button',
-                                        { id: 'locked-reset' },
-                                        ' Reset Tree '
+                                        'div',
+                                        null,
+                                        _react2.default.createElement(
+                                            'button',
+                                            { id: 'locked-gen' },
+                                            ' Generate Random Tree '
+                                        ),
+                                        _react2.default.createElement(
+                                            'button',
+                                            { id: 'locked-reset' },
+                                            ' Reset Tree '
+                                        )
                                     )
                                 )
                             )
@@ -1781,7 +1859,9 @@ var mapDispatchToProps = function mapDispatchToProps() {
             postOrder: function postOrder(speed, root) {
                 dispatch((0, _reducers.post_order)(speed, root));
             },
-
+            generate: function generate() {
+                dispatch((0, _reducers.random_generate)());
+            },
             reset: function reset() {
                 dispatch((0, _reducers.reset)());
             }
@@ -1863,7 +1943,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.post_order = exports.in_order = exports.pre_order = exports.breadth_first = exports.search = exports.unlock_toolbar = exports.lock_toolbar = exports.slide = exports.remove = exports.insert = exports.reset = undefined;
+exports.post_order = exports.in_order = exports.pre_order = exports.breadth_first = exports.search = exports.unlock_toolbar = exports.lock_toolbar = exports.slide = exports.remove = exports.insert = exports.reset = exports.random_generate = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -1874,6 +1954,10 @@ var _remove = __webpack_require__(/*! ../algorithms/remove */ "./client/app/algo
 var _binarySearch = __webpack_require__(/*! ../algorithms/binary-search */ "./client/app/algorithms/binary-search.js");
 
 var _binarySearch2 = _interopRequireDefault(_binarySearch);
+
+var _random_generator = __webpack_require__(/*! ../algorithms/random_generator */ "./client/app/algorithms/random_generator.js");
+
+var _random_generator2 = _interopRequireDefault(_random_generator);
 
 var _breadthFirst = __webpack_require__(/*! ../algorithms/breadth-first */ "./client/app/algorithms/breadth-first.js");
 
@@ -1907,8 +1991,14 @@ var REMOVE = 'REMOVE';
 var SLIDE = 'SLIDE';
 var LOCK_TOOLBAR = 'LOCK_TOOLBAR';
 var UNLOCK_TOOLBAR = 'UNLOCK_TOOLBAR';
+var RANDOM_GENERATE = 'RANDOM_GENERATE';
 
 //ACTION CREATORS
+var random_generate = exports.random_generate = function random_generate() {
+    return {
+        type: RANDOM_GENERATE
+    };
+};
 var reset = exports.reset = function reset() {
     return {
         type: RESET
@@ -2032,6 +2122,9 @@ var reducer = function reducer() {
                 newRoot = null;
             }
             return _extends({}, state, { root: newRoot, tree: tree });
+        case RANDOM_GENERATE:
+            var random = (0, _random_generator2.default)();
+            return _extends({}, state, { tree: random.random_tree, root: random.random_root });
         case LOCK_TOOLBAR:
             return _extends({}, state, { toolbar_lock: true });
         case UNLOCK_TOOLBAR:
@@ -13266,7 +13359,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Montserrat:500&display=swap);", ""]);
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Courgette&display=swap);", ""]);
 // Module
-exports.push([module.i, "/* GENRAL */\nli, button, SearchButton, InsertButton {\n  font-family: \"Montserrat\", sans-serif;\n  font-weight: 500;\n  font-size: 10px;\n  color: black;\n  text-decoration: none;\n}\n\n/* HEADER */\nheader {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 0px 3%;\n  background-color: darkolivegreen;\n  border-bottom-left-radius: 10px;\n  border-bottom-right-radius: 10px;\n  margin: 0px;\n}\n\n/* LOGO */\n.logo {\n  font-size: 25px;\n  cursor: pointer;\n  color: white;\n  font-family: 'Courgette', cursive;\n  display: flex;\n  flex-direction: column;\n}\n#name {\n  font-size: 12px;\n  align-self: flex-end;\n}\n#name:visited{\n  color:blue;\n}\n\n/* A LIST OF LIST'S OF ALL BUTTONS */\n.tool-buttons {\n  list-style: none;\n}\n\n/* EACH LIST OF BUTTONS */\n.tool-buttons li {\n  display: inline-block;\n  padding: 0px 10px;\n}\n\n/* EACH INDIVIDUAL BUTTON */\n.tool-buttons li button {\n  padding: 8px 7px;\n  background-color: rgba(204,204,0, 1);\n  border: none;\n  border-radius: 50px;\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n  outline: none;\n  box-shadow: 0 6px #999;\n}\n\n.tool-buttons li button:hover {\n  background-color: rgba(204,204,0, 0.6);\n}\n.tool-buttons li button:active {\n  background-color: rgb(104, 104, 6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n/* SUBLIST OF BUTTONS */\n.traversal-buttons {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.traversal-buttons div {\n  display: flex;\n  justify-content: space-evenly;\n  align-items: center;\n  /* padding: 10px; */\n}\n\n.traversal-buttons div button{\n  padding: 6px 20px;\n  margin: 5px;\n}\n\n/* LOCKED BUTTONS */\n.tool-buttons .locked button{\n  background-color: darkolivegreen;\n}\n.tool-buttons .locked button:hover {\n  background-color:  darkolivegreen;\n}\n.tool-buttons .locked button:active {\n  background-color:  darkolivegreen;\n  box-shadow: 0 2px #666;\n  transform: none;\n}\n\n/* RESET BUTTON */\n#reset {\n  padding: 3px 6px;\n  height: 20px;\n  background-color: red;\n  width: 80px;\n  justify-self: baseline;\n  align-self: center;\n}\n#reset:hover {\n  background-color: rgba(232, 46, 46, 0.6);\n}\n#reset:active {\n  background-color: rgba(154, 24, 24, 0.6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n/* LOCKED RESET BUTTON */\n#locked-reset {\n  background-color: darkolivegreen;\n  padding: 3px 6px;\n  height: 20px;\n  width: 80px;\n  justify-self: baseline;\n  align-self: center;\n}\n#locked-reset:hover {\n  background-color:darkolivegreen;\n}\n#locked-reset:active {\n  background-color: darkolivegreen;\n  box-shadow: 0 2px #666;\n  transform: none;\n}\n\n/* INSERT AND SEARCH FORMS */\nform {\n  height: 58px;\n  display: flex;\n  justify-content: space-between;\n  flex-direction: column;\n  \n}\n.form-button {\n  padding: 3px 2px;\n  height: 20px;\n  background-color: rgba(204,204,0, 1);\n  border: none;\n  border-radius: 50px;\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n  outline: none;\n  box-shadow: 0 6px #999;\n}\n.form-button:hover {\n  background-color: rgba(204,204,0, 0.6);\n}\n.form-button:active {\n  background-color: rgb(104, 104, 6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n.form-input {\n  border-radius: 25px;\n  height: 20px;\n  text-align: center;\n  outline: none;\n  padding: 3px;\n}\n\n.form-input:focus{\n  transform: scale(.993, .94);\n  transition: transform .5s, opacity .25s;\n  border-radius: 25px;\n  box-shadow: inset 0 0 0 3px #fff,\n    0 0 0 4px #fff,\n    3px -3px 30px gold\n}\n\n/* SLIDER */\n.slidecontainer {\n  display: flex;\n  flex-direction: column;\n  padding-top: 10px;\n  \n}\n\n.slidecontainer p {\n  color: white;\n}\n\n.slider {\n  -webkit-appearance: none;\n  width: 100%;\n  height: 5px;\n  border-radius: 5px;\n  background: #d3d3d3;\n  outline: none;\n  opacity: 1;\n  -webkit-transition: .2s;\n  transition: opacity .2s;\n}\n\n.slider:hover {\n  opacity: 1;\n}\n\n/* ANIMATIONS */\n\n.slider::-webkit-slider-thumb {\n  -webkit-appearance: none;\n  appearance: none;\n  width: 17px;\n  height: 17px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n}\n\n.slider::-moz-range-thumb {\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n}\n\n.slider::-webkit-slider-thumb:hover {\n  background: rgb(170, 170, 5);\n}\n\n.slider::-moz-range-thumb {\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n}\n\nslider::-moz-range-thumb:hover {\n  background: rgb(170, 170, 5);\n}\n\n", ""]);
+exports.push([module.i, "/* GENRAL */\nli, button, SearchButton, InsertButton {\n  font-family: \"Montserrat\", sans-serif;\n  font-weight: 500;\n  font-size: 10px;\n  color: black;\n  text-decoration: none;\n}\n\n/* HEADER */\nheader {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 0px 3%;\n  background-color: darkolivegreen;\n  border-bottom-left-radius: 10px;\n  border-bottom-right-radius: 10px;\n  margin: 0px;\n}\n\n/* LOGO */\n.logo {\n  font-size: 25px;\n  cursor: pointer;\n  color: white;\n  font-family: 'Courgette', cursive;\n  display: flex;\n  flex-direction: column;\n}\n#name {\n  font-size: 12px;\n  align-self: flex-end;\n}\n#name:visited{\n  color:blue;\n}\n\n/* A LIST OF LIST'S OF ALL BUTTONS */\n.tool-buttons {\n  list-style: none;\n}\n\n/* EACH LIST OF BUTTONS */\n.tool-buttons li {\n  display: inline-block;\n  padding: 0px 10px;\n}\n\n/* EACH INDIVIDUAL BUTTON */\n.tool-buttons li button {\n  padding: 8px 7px;\n  background-color: rgba(204,204,0, 1);\n  border: none;\n  border-radius: 50px;\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n  outline: none;\n  box-shadow: 0 6px #999;\n}\n\n.tool-buttons li button:hover {\n  background-color: rgba(204,204,0, 0.6);\n}\n.tool-buttons li button:active {\n  background-color: rgb(104, 104, 6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n/* SUBLIST OF BUTTONS */\n.traversal-buttons {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.traversal-buttons div {\n  display: flex;\n  justify-content: space-evenly;\n  align-items: center;\n  /* padding: 10px; */\n}\n\n.traversal-buttons div button{\n  padding: 6px 20px;\n  margin: 5px;\n}\n\n/* LOCKED BUTTONS */\n.tool-buttons .locked button{\n  background-color: darkolivegreen;\n}\n.tool-buttons .locked button:hover {\n  background-color:  darkolivegreen;\n}\n.tool-buttons .locked button:active {\n  background-color:  darkolivegreen;\n  box-shadow: 0 2px #666;\n  transform: none;\n}\n\n/* RESET BUTTON */\n#reset {\n  padding: 3px 6px;\n  height: 20px;\n  background-color: red;\n  width: 80px;\n  justify-self: baseline;\n  align-self: center;\n}\n#reset:hover {\n  background-color: rgba(232, 46, 46, 0.6);\n}\n#reset:active {\n  background-color: rgba(154, 24, 24, 0.6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n/* LOCKED RESET BUTTON */\n#locked-reset {\n  background-color: darkolivegreen;\n  padding: 3px 6px;\n  height: 20px;\n  width: 80px;\n  justify-self: baseline;\n  align-self: center;\n}\n#locked-reset:hover {\n  background-color:darkolivegreen;\n}\n#locked-reset:active {\n  background-color: darkolivegreen;\n  box-shadow: 0 2px #666;\n  transform: none;\n}\n\n/* GENERARE RANDOM TREE BUTTON */\n#gen {\n  background-color: rgb(37, 192, 26);\n}\n#gen:hover {\n  background-color: rgba(17, 117, 10, 0.6);\n}\n#gen:active {\n  background-color: rgba(7, 66, 3, 0.6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n/* LOCKED GENERATE RANDOM TREE BUTTON */\n#locked-gen {\n  background-color: darkolivegreen;\n}\n#locked-gen:hover {\n  background-color:darkolivegreen;\n}\n#locked-gen:active {\n  background-color: darkolivegreen;\n  box-shadow: 0 2px #666;\n  transform: none;\n}\n\n/* INSERT AND SEARCH FORMS */\nform {\n  height: 58px;\n  display: flex;\n  justify-content: space-between;\n  flex-direction: column;\n  \n}\n.form-button {\n  padding: 3px 2px;\n  height: 20px;\n  background-color: rgba(204,204,0, 1);\n  border: none;\n  border-radius: 50px;\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n  outline: none;\n  box-shadow: 0 6px #999;\n}\n.form-button:hover {\n  background-color: rgba(204,204,0, 0.6);\n}\n.form-button:active {\n  background-color: rgb(104, 104, 6);\n  box-shadow: 0 2px #666;\n  transform: translateY(4px);\n}\n\n.form-input {\n  border-radius: 25px;\n  height: 20px;\n  text-align: center;\n  outline: none;\n  padding: 3px;\n}\n\n.form-input:focus{\n  transform: scale(.993, .94);\n  transition: transform .5s, opacity .25s;\n  border-radius: 25px;\n  box-shadow: inset 0 0 0 3px #fff,\n    0 0 0 4px #fff,\n    3px -3px 30px gold\n}\n\n/* SLIDER */\n.slidecontainer {\n  display: flex;\n  flex-direction: column;\n  padding-top: 10px;\n  \n}\n\n.slidecontainer p {\n  color: white;\n}\n\n.slider {\n  -webkit-appearance: none;\n  width: 100%;\n  height: 5px;\n  border-radius: 5px;\n  background: #d3d3d3;\n  outline: none;\n  opacity: 1;\n  -webkit-transition: .2s;\n  transition: opacity .2s;\n}\n\n.slider:hover {\n  opacity: 1;\n}\n\n/* ANIMATIONS */\n\n.slider::-webkit-slider-thumb {\n  -webkit-appearance: none;\n  appearance: none;\n  width: 17px;\n  height: 17px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n}\n\n.slider::-moz-range-thumb {\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n  transition: all 0.3s ease 0s;\n}\n\n.slider::-webkit-slider-thumb:hover {\n  background: rgb(170, 170, 5);\n}\n\n.slider::-moz-range-thumb {\n  width: 25px;\n  height: 25px;\n  border-radius: 50%;\n  background: rgba(204,204,0, 1);\n  cursor: pointer;\n}\n\nslider::-moz-range-thumb:hover {\n  background: rgb(170, 170, 5);\n}\n\n", ""]);
 
 
 /***/ }),

@@ -32,7 +32,10 @@ class ToolBar extends Component {
                                     </div>
                                     <div>
                                         <Slider />
-                                        <button onClick={this.props.reset}  id='reset'> Reset Tree </button>
+                                        <div>
+                                            <button onClick={this.props.generate}  id='gen'> Generate Random Tree </button>
+                                            <button onClick={this.props.reset}  id='reset'> Reset Tree </button>
+                                        </div>    
                                     </div>
                             </div>
                         </li>
@@ -59,7 +62,10 @@ class ToolBar extends Component {
                                     </div>
                                     <div>
                                         <Slider />
-                                        <button id='locked-reset'> Reset Tree </button>
+                                        <div>
+                                            <button id='locked-gen'> Generate Random Tree </button>
+                                            <button id='locked-reset'> Reset Tree </button>
+                                        </div>
                                     </div>
                             </div>
                         </li>

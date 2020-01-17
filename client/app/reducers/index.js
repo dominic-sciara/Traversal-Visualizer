@@ -1,6 +1,7 @@
 import { BST, treeToArray, traverse, emptyTree } from '../algorithms'
-import { del, showDel, getDelAnimations } from '../algorithms/remove'
+import { del } from '../algorithms/remove'
 import showSearch, { getBinarySearchAnimations } from '../algorithms/binary-search'
+import random_generater from '../algorithms/random_generator'
 import showBreadFirst from '../algorithms/breadth-first'
 import showPreOrder from '../algorithms/pre-order'
 import showInOrder from '../algorithms/in-order'
@@ -24,9 +25,13 @@ const REMOVE = 'REMOVE'
 const SLIDE = 'SLIDE'
 const LOCK_TOOLBAR = 'LOCK_TOOLBAR'
 const UNLOCK_TOOLBAR = 'UNLOCK_TOOLBAR'
+const RANDOM_GENERATE = 'RANDOM_GENERATE'
 
 
 //ACTION CREATORS
+export const random_generate = () => ({
+    type: RANDOM_GENERATE
+})
 export const reset = () => ({
     type: RESET
 });
@@ -136,6 +141,9 @@ const reducer = (state = initialState, action) => {
                 newRoot = null
             } 
             return {...state, root: newRoot, tree}
+        case RANDOM_GENERATE:
+            let random = random_generater()
+            return {...state, tree: random.random_tree, root: random.random_root}
         case LOCK_TOOLBAR:
             return {...state, toolbar_lock: true}
         case UNLOCK_TOOLBAR:
